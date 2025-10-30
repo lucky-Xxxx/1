@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>佳佳</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .message {
+            position: absolute;
+            padding: 10px 14px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+            max-width: 140px;
+            word-wrap: break-word;
+            z-index: 10;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: messageAppear 0.5s forwards, float 3s ease-in-out 0.5s infinite;
+        }
+        
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.02); }
+        }
+        
+        .final-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: popIn 1s ease-out;
+            backdrop-filter: blur(10px);
+            width: 85%;
+            max-width: 320px;
+        }
+        
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .final-message h1 {
+            color: #B22222;
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.3;
+        }
+        
+        .love-btn {
+            background: linear-gradient(45deg, #ff85a2, #ff9ebb);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .love-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 133, 162, 0.6);
+            background: linear-gradient(45deg, #ff9ebb, #ffb3d9);
+        }
+        
+        .heart {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #e74c3c;
+            transform: rotate(45deg);
+            animation: heartbeat 1.2s infinite;
+            z-index: 5;
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -8px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -8px;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.1); }
+        }
+        
+        .floating-heart {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            transform: rotate(45deg);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .floating-heart:before,
+        .floating-heart:after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .floating-heart:before {
+            top: -6px;
+            left: 0;
+        }
+        
+        .floating-heart:after {
+            top: 0;
+            left: -6px;
+        }
+        
+        .background-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .background-heart {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            opacity: 0.1;
+            background: #e74c3c;
+            transform: rotate(45deg);
+            animation: backgroundFloat 15s infinite linear;
+        }
+        
+        .background-heart:before,
+        .background-heart:after {
+            content: '';
+            width: 25px;
+            height: 25px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .background-heart:before {
+            top: -12.5px;
+            left: 0;
+        }
+        
+        .background-heart:after {
+            top: 0;
+            left: -12.5px;
+        }
+        
+        @keyframes backgroundFloat {
+            0% { transform: rotate(45deg) translateY(100vh); }
+            100% { transform: rotate(45deg) translateY(-100px); }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .message {
+                padding: 8px 12px;
+                font-size: 13px;
+                max-width: 120px;
+                border-radius: 14px;
+            }
+            
+            .final-message {
+                padding: 18px 22px;
+                width: 85%;
+                max-width: 280px;
+            }
+            
+            .final-message h1 {
+                font-size: 20px;
+                margin-bottom: 18px;
+            }
+            
+            .love-btn {
+                padding: 10px 25px;
+                font-size: 16px;
+            }
+            
+            .heart {
+                width: 14px;
+                height: 14px;
+            }
+            
+            .heart:before,
+            .heart:after {
+                width: 14px;
+                height: 14px;
+            }
+            
+            .heart:before {
+                top: -7px;
+            }
+            
+            .heart:after {
+                left: -7px;
+            }
+            
+            .background-heart {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .background-heart:before,
+            .background-heart:after {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .background-heart:before {
+                top: -10px;
+            }
+            
+            .background-heart:after {
+                left: -10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .message {
+                padding: 7px 10px;
+                font-size: 12px;
+                max-width: 110px;
+            }
+            
+            .final-message {
+                padding: 15px 20px;
+                width: 90%;
+                max-width: 260px;
+            }
+            
+            .final-message h1 {
+                font-size: 18px;
+            }
+            
+            .love-btn {
+                padding: 8px 20px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .message {
+                padding: 6px 8px;
+                font-size: 11px;
+                max-width: 100px;
+            }
+            
+            .final-message {
+                padding: 12px 16px;
+                width: 90%;
+                max-width: 240px;
+            }
+            
+            .final-message h1 {
+                font-size: 16px;
+            }
+            
+            .love-btn {
+                padding: 7px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="background-hearts" id="backgroundHearts"></div>
+    </div>
+
+    <script>
+        // 温馨提醒文字
+        const tips = [
+            '宝宝多喝水哦~', '每天都要元气满满', '保持微笑呀', '保持好心情', '乖乖吃饭',
+            '我想你了 佳佳~',  '爱你哦 佳佳', '今天也要开心哦','期待下一次见面', 
+            '每天开开心心哒','早点休息呀', '不要熬夜哟', '愿所有烦恼都消失', 
+            '天冷多穿衣服','你是最棒的！', '要相信自己哦', '保持好心情', '一切都会好的',
+            '记得微笑呀', '今天也要加油', '照顾好自己', '想你每一天'
+        ];
+
+        // 背景颜色
+        const bgColors = [
+            '#FFB6C1', '#87CEEB', '#98FB98', '#E6E6FA', '#FFFACD',
+            '#DDA0DD', '#FF7F50', '#FFE4C4', '#7FFFD4', '#FFE4E1',
+            '#F0FFF0', '#FFF0F5', '#FDF5E6', '#FF69B4', '#FF1493'
+        ];
+
+        // 创建背景爱心
+        function createBackgroundHearts() {
+            const container = document.getElementById('backgroundHearts');
+            // 增加背景爱心数量
+            const heartCount = window.innerWidth < 768 ? 20 : 25;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'background-heart';
+                
+                // 随机位置和动画延迟
+                const left = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const duration = 15 + Math.random() * 10;
+                
+                heart.style.left = `${left}%`;
+                heart.style.animationDelay = `${delay}s`;
+                heart.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(heart);
+            }
+        }
+
+        // 更标准的爱心形状参数方程
+        function heartShape(numPoints = 80) {
+            const points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const t = i / numPoints * 2 * Math.PI;
+                // 更标准的爱心参数方程
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                points.push({x, y});
+            }
+            return points;
+        }
+
+        // 缩放爱心点到屏幕坐标，并确保爱心在屏幕中心
+        function scaleHeartPoints(points, screenWidth, screenHeight, elementWidth, elementHeight) {
+            // 计算爱心图形的边界
+            const minX = Math.min(...points.map(p => p.x));
+            const maxX = Math.max(...points.map(p => p.x));
+            const minY = Math.min(...points.map(p => p.y));
+            const maxY = Math.max(...points.map(p => p.y));
+            
+            // 计算爱心图形的宽高
+            const heartWidth = maxX - minX;
+            const heartHeight = maxY - minY;
+            
+            // 计算缩放比例，确保爱心在屏幕内
+            const scaleX = (screenWidth * 0.7) / heartWidth;
+            const scaleY = (screenHeight * 0.7) / heartHeight;
+            const scale = Math.min(scaleX, scaleY);
+            
+            // 计算爱心中心点
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            
+            // 计算偏移量，使爱心中心与屏幕中心对齐
+            // 同时减去元素宽度/高度的一半，使元素中心在爱心轨迹上
+            const offsetX = screenWidth / 2 - centerX * scale - elementWidth / 2;
+            const offsetY = screenHeight / 2 - centerY * scale - elementHeight / 2;
+            
+            return points.map(p => ({
+                x: p.x * scale + offsetX,
+                y: p.y * scale + offsetY
+            }));
+        }
+
+        // 创建消息元素
+        function createMessage(x, y, text, bgColor) {
+            const message = document.createElement('div');
+            message.className = 'message';
+            message.style.left = x + 'px';
+            message.style.top = y + 'px';
+            message.style.backgroundColor = bgColor;
+            message.style.color = getContrastColor(bgColor);
+            message.textContent = text;
+            
+            // 添加随机旋转
+            const rotation = Math.random() * 10 - 5;
+            message.style.transform += ` rotate(${rotation}deg)`;
+            
+            return message;
+        }
+
+        // 获取对比色（确保文字可读）
+        function getContrastColor(hexcolor) {
+            const r = parseInt(hexcolor.substr(1, 2), 16);
+            const g = parseInt(hexcolor.substr(3, 2), 16);
+            const b = parseInt(hexcolor.substr(5, 2), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 128 ? '#000000' : '#FFFFFF';
+        }
+
+        // 显示最终消息
+        function showFinalMessage() {
+            const finalMsg = document.createElement('div');
+            finalMsg.className = 'final-message';
+            finalMsg.innerHTML = `
+                <h1>爱你呀！<br>佳佳宝宝</h1>
+                <button class="love-btn" onclick="location.reload()">❤</button>
+            `;
+            document.body.appendChild(finalMsg);
+            
+            // 增加飘动的心形数量
+            for (let i = 0; i < 50; i++) {
+                createFloatingHeart();
+            }
+        }
+
+        // 创建飘动的心形
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            
+            // 随机位置
+            const startX = Math.random() * window.innerWidth;
+            heart.style.left = startX + 'px';
+            heart.style.top = window.innerHeight + 'px';
+            
+            document.body.appendChild(heart);
+            
+            // 动画
+            const duration = 3 + Math.random() * 2;
+            const endY = -50;
+            const endX = startX + (Math.random() * 100 - 50);
+            
+            heart.animate([
+                { transform: `translate(0, 0) rotate(45deg)`, opacity: 1 },
+                { transform: `translate(${endX - startX}px, ${endY}px) rotate(45deg)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        // 主函数
+        function main() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // 根据屏幕大小调整元素尺寸
+            let elementWidth, elementHeight;
+            if (screenHeight > screenWidth) {
+                // 竖屏模式
+                elementWidth = screenWidth < 480 ? 100 : 120;
+                elementHeight = screenWidth < 480 ? 70 : 80;
+            } else {
+                // 横屏模式
+                elementWidth = screenWidth < 768 ? 120 : 160;
+                elementHeight = screenWidth < 768 ? 80 : 100;
+            }
+            
+            // 增加爱心轨迹上的点数，从而增加卡片数量
+            const heartPoints = heartShape(80);
+            const screenPoints = scaleHeartPoints(heartPoints, screenWidth, screenHeight, elementWidth, elementHeight);
+            
+            // 显示爱心消息
+            screenPoints.forEach((point, index) => {
+                setTimeout(() => {
+                    const text = tips[Math.floor(Math.random() * tips.length)];
+                    const bgColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+                    const message = createMessage(point.x, point.y, text, bgColor);
+                    document.getElementById('container').appendChild(message);
+                    
+                    // 6秒后淡出
+                    setTimeout(() => {
+                        message.style.opacity = '0';
+                        message.style.transform += ' scale(0.8)';
+                        setTimeout(() => message.remove(), 1000);
+                    }, 8000);
+                }, index * 100); // 减少间隔时间，使卡片出现更密集
+            });
+            
+            // 显示最终消息
+            setTimeout(showFinalMessage, screenPoints.length * 100 + 700);
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('load', function() {
+            createBackgroundHearts();
+            main();
+        });
+        
+        // 窗口大小改变时重新计算
+        window.addEventListener('resize', function() {
+            document.getElementById('container').innerHTML = '';
+            document.querySelector('.final-message')?.remove();
+            createBackgroundHearts();
+            main();
+        });
+    </script>
+</body>
+</html>
